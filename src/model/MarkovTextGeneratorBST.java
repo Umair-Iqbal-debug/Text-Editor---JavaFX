@@ -117,13 +117,15 @@ public class MarkovTextGeneratorBST {
 	
 	private void generateText(WordNode currWordNode,StringBuilder sb,int totalWords) {
 		
+		// mutates the stringBuilder object given in the as the argument
+		
 		if(totalWords == 0 || currWordNode == null) return;
 		
-		sb.append(currWordNode.getWord() + " ");
-		
-		WordNode nextWordNode = currWordNode.getRandomNextWord();
-		
-		generateText(nextWordNode,sb,totalWords - 1);
+		for(int i = 0; i < totalWords; i++) {
+			// add the current word to the string builder and move on to the next one
+			sb.append(currWordNode.getWord() + " ");
+			currWordNode = currWordNode.getRandomNextWord();
+		}
 	}
 	
 
@@ -169,7 +171,7 @@ public class MarkovTextGeneratorBST {
 		//System.out.println(gen.getWordList().get(0).getRandomNextWord());
 		
 		//gen.display();
-		System.out.println(gen.generateText(10, "well"));
+		System.out.println(gen.generateText(10000, "well"));
 
 	}
 
