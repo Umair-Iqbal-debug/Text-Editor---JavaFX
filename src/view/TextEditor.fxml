@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.CustomMenuItem?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="529.0" prefWidth="722.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TextEditorController">
+   <top>
+      <MenuBar fx:id="menuBar" prefHeight="28.0" prefWidth="722.0" BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem fx:id="newMenuItem" mnemonicParsing="false" text="New" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+              <MenuItem fx:id="loadMenuItem" mnemonicParsing="false" text="Open" />
+                  <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" text="Close" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="Save" />
+                  <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" text="Save As" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="markovTextBtn" mnemonicParsing="false" text="Markov Text Generator" />
+                  <CustomMenuItem fx:id="spellCheckMenuItem" mnemonicParsing="false" text="Spell-Check">
+                    <content>
+                      <CheckBox text="Spell-Check" />
+                    </content>
+                  </CustomMenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="logOutMenuItem" mnemonicParsing="false" text="Log out" />
+                  <MenuItem mnemonicParsing="false" text="Exit" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Edit">
+              <items>
+                  <MenuItem fx:id="formatTextMenuItem" mnemonicParsing="false" text="Format Text" />
+                <MenuItem fx:id="undoMenuItem" mnemonicParsing="false" text="Undo" />
+                  <MenuItem fx:id="wordCounMenuItem" mnemonicParsing="false" text="Word Count" />
+                  <MenuItem fx:id="sentenceCountMenuItem" mnemonicParsing="false" text="Sentence Count" />
+                  <MenuItem fx:id="fleschScoreMenuItem" mnemonicParsing="false" text="Flesch Score" />
+              </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <right>
+      <VBox fx:id="rightVBox" prefHeight="482.0" prefWidth="0.0" BorderPane.alignment="CENTER" />
+   </right>
+   <center>
+      <VBox fx:id="centerVBox" prefHeight="450.0" prefWidth="635.0" style="-fx-background-color: aliceblue;" BorderPane.alignment="CENTER">
+         <children>
+            <HBox fx:id="formatMenu" prefHeight="38.0" prefWidth="718.0" style="-fx-background-color: aliceblue;">
+               <children>
+                  <ColorPicker fx:id="colorPicker">
+                     <HBox.margin>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </HBox.margin>
+                  </ColorPicker>
+                  <ComboBox fx:id="cboFontFamily" prefWidth="150.0">
+                     <HBox.margin>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </HBox.margin>
+                  </ComboBox>
+                  <Slider fx:id="fontSlider">
+                     <HBox.margin>
+                        <Insets bottom="18.0" left="18.0" right="18.0" top="18.0" />
+                     </HBox.margin>
+                  </Slider>
+               </children>
+            </HBox>
+            <TextArea fx:id="textEditorTextArea" prefHeight="446.0" prefWidth="709.0">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextArea>
+         </children>
+         <padding>
+            <Insets bottom="5.0" right="5.0" top="5.0" />
+         </padding>
+      </VBox>
+   </center>
+   <left>
+      <VBox prefHeight="495.0" prefWidth="0.0" BorderPane.alignment="CENTER" />
+   </left>
+   <bottom>
+      <HBox prefHeight="12.0" prefWidth="722.0" spacing="5.0" style="-fx-background-color: grey;" BorderPane.alignment="CENTER">
+         <children>
+            <HBox fx:id="wordCountContainer" prefHeight="18.0" prefWidth="62.0" spacing="2.0">
+               <children>
+                  <Label text="Words: " />
+                  <Label fx:id="wordCountLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <HBox fx:id="sentenceCountContainer" layoutX="10.0" layoutY="10.0" prefHeight="18.0" prefWidth="84.0" spacing="2.0">
+               <children>
+                  <Label text="Sentences:" />
+                  <Label fx:id="sentenceCountLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <HBox fx:id="fleschScoreContainer" layoutX="73.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="93.0">
+               <children>
+                  <Label prefHeight="18.0" prefWidth="73.0" text="Flesch Score:" />
+                  <Label fx:id="fleschScoreLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets left="2.0" top="2.0" />
+         </padding>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+</BorderPane>

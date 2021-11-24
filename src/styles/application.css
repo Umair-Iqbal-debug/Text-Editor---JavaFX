@@ -1,0 +1,36 @@
+.link-btn:hover{
+	-fx-background-color:rgba(0, 83, 255, 0.26);
+	-fx-background-radius:20px;
+	-fx-underline:true;
+}
+
+.link-btn{
+	-fx-background-color: transparent;
+}
+
+.textFieldDanger{
+	-fx-border-color:red red red red;
+}
+
+.modern-btn{
+	-fx-background-radius:20px;
+	-fx-background-color:rgba(0, 83, 255, 0.54);
+}
+
+.modern-btn:hover{
+	-fx-background-color:rgba(0, 83, 255, 0.84);
+}
+
+
+.modern-text-field{
+	-fx-border-color: rgba(104, 92, 138, 0.2) rgba(104, 92, 138, 0.2) rgba(104, 92, 138, 0.2) rgba(104, 92, 138, 0.2);
+	-fx-border-style: hidden hidden solid hidden;
+	-fx-background-color: transparent;
+	
+	}
+	
+.modern-text-field:focused{
+	-fx-border-color: blue blue blue blue;
+}
+
+

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="541.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MarkovTextController">
+   <bottom>
+      <TextArea fx:id="outputField" editable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <font>
+            <Font name="Consolas" size="12.0" />
+         </font>
+         <BorderPane.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </BorderPane.margin>
+      </TextArea>
+   </bottom>
+   <center>
+      <AnchorPane prefHeight="181.0" prefWidth="542.0" style="-fx-background-color: aliceblue;" BorderPane.alignment="CENTER">
+         <children>
+            <VBox alignment="CENTER" layoutX="168.0" layoutY="14.0">
+               <children>
+                  <TextField fx:id="wordField" prefHeight="26.0" prefWidth="182.0" promptText="ENTER A WORD" styleClass="modern-text-field">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <font>
+                        <Font name="Consolas" size="16.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <TextField fx:id="numberField" prefHeight="30.0" prefWidth="180.0" promptText="ENTER A NUMBER" styleClass="modern-text-field">
+                     <font>
+                        <Font name="Consolas" size="16.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </TextField>
+               </children>
+            </VBox>
+          <Button fx:id="createBtn" layoutX="168.0" layoutY="102.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="73.0" styleClass="modern-btn" text="CREATE" textFill="WHITE" />
+            <Button fx:id="learnBtn" layoutX="271.0" layoutY="101.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="86.0" styleClass="modern-btn" text="LEARN" textFill="WHITE">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Button>
+            <Label layoutX="41.0" layoutY="139.0" text="Selected File:" />
+            <Label fx:id="fileNameLabel" layoutX="110.0" layoutY="139.0" text="None" />
+            <Button fx:id="backBtn" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="73.0" styleClass="modern-btn" text="BACK" textFill="WHITE" />
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>
