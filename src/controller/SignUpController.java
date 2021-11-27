@@ -97,7 +97,6 @@ public class SignUpController implements Initializable {
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		
 		signUpBtn.setDisable(true);
-		
 
 		showPasswordField.textProperty().bindBidirectional(passwordField.textProperty());
 		showPasswordField.setVisible(false);
@@ -230,6 +229,7 @@ public class SignUpController implements Initializable {
 		});
 
 		signInBtn.setOnAction(e -> {
+			Main.window.setTitle(Titles.SIGN_IN);
 			Main.splitPane.getItems().set(1, Main.signInPane);
 		});
 		
@@ -256,6 +256,7 @@ public class SignUpController implements Initializable {
 			else if (Main.bag.addUser(usernameTextField.getText(), passwordField.getText())) {
 				BackUpRestoreTools.backupUserBag(Main.bag);
 				// move text editor here
+				Main.window.setTitle(Titles.TEXT_EDITOR);
 				Main.window.setScene(new Scene(Main.textEditor));
 
 				//errorLabel.setText("Sign up was successful!");

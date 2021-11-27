@@ -7,12 +7,13 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="541.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MarkovTextController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="503.0" prefWidth="636.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MarkovTextController">
    <bottom>
-      <TextArea fx:id="outputField" editable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <TextArea fx:id="outputField" editable="false" prefHeight="306.0" prefWidth="606.0" style="-fx-max-height: 1000px;" BorderPane.alignment="CENTER">
          <font>
             <Font name="Consolas" size="12.0" />
          </font>
@@ -22,9 +23,9 @@
       </TextArea>
    </bottom>
    <center>
-      <AnchorPane prefHeight="181.0" prefWidth="542.0" style="-fx-background-color: aliceblue;" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="200.0" prefWidth="570.0" style="-fx-background-color: aliceblue;" BorderPane.alignment="CENTER">
          <children>
-            <VBox alignment="CENTER" layoutX="168.0" layoutY="14.0">
+            <VBox alignment="CENTER" layoutX="205.0" layoutY="27.0">
                <children>
                   <TextField fx:id="wordField" prefHeight="26.0" prefWidth="182.0" promptText="ENTER A WORD" styleClass="modern-text-field">
                      <opaqueInsets>
@@ -45,14 +46,24 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </VBox.margin>
                   </TextField>
+                  <HBox prefHeight="39.0" prefWidth="168.0" spacing="8.0">
+                     <children>
+                        <Button fx:id="learnBtn" mnemonicParsing="false" prefHeight="27.0" prefWidth="86.0" styleClass="modern-btn" text="LEARN" textFill="WHITE">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Button>
+                      <Button fx:id="createBtn" mnemonicParsing="false" prefHeight="26.0" prefWidth="73.0" styleClass="modern-btn" text="CREATE" textFill="WHITE" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </HBox>
                </children>
             </VBox>
-          <Button fx:id="createBtn" layoutX="168.0" layoutY="102.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="73.0" styleClass="modern-btn" text="CREATE" textFill="WHITE" />
-            <Button fx:id="learnBtn" layoutX="271.0" layoutY="101.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="86.0" styleClass="modern-btn" text="LEARN" textFill="WHITE">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </Button>
             <Label layoutX="41.0" layoutY="139.0" text="Selected File:" />
             <Label fx:id="fileNameLabel" layoutX="110.0" layoutY="139.0" text="None" />
             <Button fx:id="backBtn" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="73.0" styleClass="modern-btn" text="BACK" textFill="WHITE" />

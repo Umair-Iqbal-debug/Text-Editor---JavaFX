@@ -143,6 +143,7 @@ public class TextEditorController implements Initializable {
 	private final List<String> fontNames = Font.getFamilies();
 	
 	private boolean menuCollapsed;
+	
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -150,8 +151,10 @@ public class TextEditorController implements Initializable {
 		
 		initfontCbo();
 		
+		Main.window.setTitle(Titles.TEXT_EDITOR);
+		
 		logOutMenuItem.setOnAction(e ->{
-			
+			// SAVE CHANGES CAN BE ITS OWN METHOD
 			Alert confirmation = new Alert(AlertType.CONFIRMATION);
 			confirmation.setHeaderText("Would you like to save the changes made to " + fullPath);
 			// check if there is something unsaved
@@ -171,8 +174,7 @@ public class TextEditorController implements Initializable {
 			
 			
 			// close current file 
-			
-			
+			closeMenuItem.fire();
 			
 			//if there something unchanged ask user if he wants to save it first
 			

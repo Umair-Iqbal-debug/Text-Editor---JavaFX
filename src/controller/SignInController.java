@@ -50,7 +50,9 @@ public class SignInController implements Initializable {
 
 	@FXML
 	private Label errorLabel;
-
+	
+	// NEEDS REFACTORING
+	
 	public AnchorPane getRoot() {
 		return rightHalfAnchorPane;
 	}
@@ -63,6 +65,8 @@ public class SignInController implements Initializable {
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
 		errorLabel.setText("");
+		
+		Main.window.setTitle(Titles.SIGN_IN);
 
 		/*
 		 * showPasswordField overflows to the hide button add another textfield just for
@@ -106,7 +110,7 @@ public class SignInController implements Initializable {
 		});
 
 		signUpBtn.setOnAction(e -> {
-
+			Main.window.setTitle(Titles.SIGN_UP);
 			splitPane.getItems().set(1, Main.signUpPane);
 
 		});
@@ -134,7 +138,7 @@ public class SignInController implements Initializable {
 			else if (Main.bag.login(usernameTextField.getText(), passwordField.getText())) {
 				
 				// move text editor here
-				
+				Main.window.setTitle(Titles.TEXT_EDITOR);
 				Main.window.setScene(Main.textEditorScene);
 				
 				passwordField.clear();
