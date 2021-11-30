@@ -1,19 +1,17 @@
 package application;
 
 import java.io.FileInputStream;
+
 import java.io.IOException;
 import java.util.Optional;
 
 import controller.SignInController;
-import controller.SignUpController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Control;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
