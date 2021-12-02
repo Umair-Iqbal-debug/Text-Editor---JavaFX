@@ -4,6 +4,7 @@ import java.io.File;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -217,6 +218,7 @@ public class TextEditorController implements Initializable {
 			textEditor.update(newVal);
 			wordCountLabel.setText(textEditor.getTotalWords() + "");
 			sentenceCountLabel.setText(textEditor.getTotalSentences() + "");
+			fleschScoreLabel.setText(formatDoubleVal(textEditor.getFleschScore()));
 
 			if (oldVal.length() >= 0)
 				undoStack.push(oldVal);
@@ -392,6 +394,11 @@ public class TextEditorController implements Initializable {
 
     private int to255Int(double d) {
         return (int) (d * 255);
+    }
+    
+    static String formatDoubleVal(double val){
+        DecimalFormat formatter = new DecimalFormat("#,###.00");
+        return formatter.format(val);
     }
 
 }

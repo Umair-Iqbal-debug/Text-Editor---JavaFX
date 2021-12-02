@@ -141,7 +141,7 @@ public class SignInController implements Initializable {
 
 			else {
 				passwordFieldContainer.setStyle("-fx-border-color:red;");
-				errorLabel.setText("Please enter your password");
+				errorLabel.setText("Incorrect password , please try again. ");
 			}
 		});
 

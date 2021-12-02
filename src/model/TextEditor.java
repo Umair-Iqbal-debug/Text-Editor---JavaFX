@@ -1,9 +1,13 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javafx.scene.control.Label;
 
@@ -47,7 +51,7 @@ public class TextEditor {
 		words = new String[0];
 		sentences = new String[0];
 		wrongWords = new LinkedList<>();
-		//fleschScoreCalculator = new FleschScoreCalculator(words,sentences);
+		fleschScoreCalculator = new FleschScoreCalculator(words,sentences);
 		
 	}
 	
@@ -70,9 +74,8 @@ public class TextEditor {
 			
 			cleanedUpString = rawContent.replaceAll("[\\n\\t ]"," ").strip().replaceAll("(\\s{2,})", " ");
 			words = cleanedUpString.split(WORD_DELIMITTER);
-			sentences = cleanedUpString.split(SENTENCE_DELIMITTER);
-			
-			//fleschScoreCalculator.update(words, sentences);
+			sentences = listToArray(getTokens("[^?.!]+",cleanedUpString));
+			fleschScoreCalculator.update(words, sentences);
 		}
 		
 		getWrongWords();
@@ -129,6 +132,29 @@ public class TextEditor {
 
 	public String getRawContent() {
 		return rawContent;
+	}
+	
+	protected static List<String> getTokens(String pattern,String text)
+	{
+		ArrayList<String> tokens = new ArrayList<String>();
+		Pattern tokSplitter = Pattern.compile(pattern);
+		Matcher m = tokSplitter.matcher(text);
+		
+		while (m.find()) {
+			tokens.add(m.group());
+		}
+		
+		return tokens;
+	}
+	
+	public static String[] listToArray(List<String> list) {
+		String[] arr = new String[list.size()];
+
+		for(int i = 0; i < list.size(); i++) {
+			arr[i] = list.get(i);
+		}
+		
+		return arr;
 	}
 	
 	public static void main(String[] args) {
