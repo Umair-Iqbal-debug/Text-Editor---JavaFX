@@ -129,7 +129,7 @@ public class SignInController implements Initializable {
 			}
 
 			else if (Main.bag.login(usernameTextField.getText(), passwordField.getText())) {
-				
+
 				// move text editor here
 				Main.window.setTitle(Titles.TEXT_EDITOR);
 				Main.window.setScene(Main.textEditorScene);

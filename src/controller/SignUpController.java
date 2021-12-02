@@ -257,7 +257,7 @@ public class SignUpController implements Initializable {
 				BackUpRestoreTools.backupUserBag(Main.bag);
 				// move text editor here
 				Main.window.setTitle(Titles.TEXT_EDITOR);
-				Main.window.setScene(new Scene(Main.textEditor));
+				Main.window.setScene(Main.textEditorScene);
 
 				//errorLabel.setText("Sign up was successful!");
 				passwordField.clear();

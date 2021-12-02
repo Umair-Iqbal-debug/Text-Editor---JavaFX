@@ -41,6 +41,8 @@ public class FileIO
 		
 		//MAKE SURE USER ENTERS VALID EXTENSION .TXT
 		
+		if(file == null) return;
+		
 		try {
 			FileWriter fw = new FileWriter(file);
 			
