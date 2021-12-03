@@ -161,6 +161,10 @@ public class TextEditor {
 	public static void main(String[] args) {
 		
 	}
+
+	public boolean hasContent() {
+		return rawContent != null || !rawContent.isBlank();
+	}
 	
 	
 

@@ -94,6 +94,12 @@ public class SignInController implements Initializable {
 	               loginBtn.fire();
 	            }
 		});
+		
+		showPasswordField.setOnKeyPressed( e -> {
+			 if (e.getCode().equals(KeyCode.ENTER)) {
+	               loginBtn.fire();
+	            }
+		});
 
 		passwordField.focusedProperty().addListener((obs, newVal, oldVal) -> {
 			if (oldVal)

@@ -41,6 +41,12 @@ import utils.FileIO;
 public class TextEditorController implements Initializable {
 	
 	@FXML
+	private HBox currentFileHBox;
+	
+	@FXML
+	private Label fileNameLabel;
+	
+	@FXML
 	private MenuItem exitMenuItem;
 	
 	@FXML
@@ -152,25 +158,12 @@ public class TextEditorController implements Initializable {
 			Main.window.close();
 		});
 		
+		
+		
 		logOutMenuItem.setOnAction(e ->{
 			// SAVE CHANGES CAN BE ITS OWN METHOD
-			Alert confirmation = new Alert(AlertType.CONFIRMATION);
-			confirmation.setHeaderText("Would you like to save the changes made to " + fullPath);
-			// check if there is something unsaved
-			boolean fullpathNull = fullPath == null;
 			
-			//read saved text file and compare content with current text area tex
-			if(!fullpathNull && !hasSameWords(fullPath,textEditor.getWords())) {
-				
-				Optional<ButtonType> save = confirmation.showAndWait();
-				
-				if(save.get().equals(ButtonType.OK)) {
-					FileIO.saveFile(textEditor.getRawContent(), new File(fullPath));
-					System.out.println("Changes were saved");
-				}
-				
-			}
-			
+			saveChanges();
 			
 			// close current file 
 			closeMenuItem.fire();
@@ -242,6 +235,7 @@ public class TextEditorController implements Initializable {
 				fullPath = file.getAbsolutePath();
 				String contents = FileIO.readString(fullPath);
 				textEditorTextArea.setText(contents);
+				fileNameLabel.setText(FileIO.getFileName(fullPath));	
 			}
 		});
 
@@ -250,7 +244,17 @@ public class TextEditorController implements Initializable {
 			wordCountLabel.setText(textEditor.getTotalWords() + "");
 			sentenceCountLabel.setText(textEditor.getTotalSentences() + "");
 			fleschScoreLabel.setText(formatDoubleVal(textEditor.getFleschScore()));
-
+			if(fullPath != null) {
+				//System.out.println("full path is not null");
+				if(changesWereMade()) fileNameLabel.setText("*" + FileIO.getFileName(fullPath));
+				else fileNameLabel.setText(FileIO.getFileName(fullPath));
+			}
+			
+			else {
+				fileNameLabel.setText(FileIO.getFileName(fullPath));
+				//System.out.println("full path is null");
+			}
+			
 			if (oldVal.length() >= 0)
 				undoStack.push(oldVal);
 		});
@@ -274,6 +278,7 @@ public class TextEditorController implements Initializable {
 
 		saveAsMenuItem.setOnAction(e -> {
 			fullPath = FileIO.displayTextFileSaver(textEditor.getRawContent(), fileChooser);
+			fileNameLabel.setText(FileIO.getFileName(fullPath));
 		});
 
 		saveMenuItem.setOnAction(e -> {
@@ -281,19 +286,10 @@ public class TextEditorController implements Initializable {
 				saveAsMenuItem.fire();
 			else
 				FileIO.saveFile(textEditor.getRawContent(), new File(fullPath));
+			fileNameLabel.setText(FileIO.getFileName(fullPath));
 		});
 
-		// addIgnoredWordBtn.setOnAction(e -> {
 
-//			dict.ignoreWord(ignoreWordTextField.getText().toLowerCase().strip());
-//			ignoreWordTextField.clear();
-//			String[] words = textEditorTextArea.getText().split(" ");
-//			misspelledWordsTextArea.setText(dict.getWrongWordsString(words));
-
-		// System.out.println(Arrays.toString(textEditor.getWords()));
-
-		// });
-		
 		fontSlider.setValue(16);
 
 		fontSlider.valueProperty().addListener(e -> {
@@ -304,10 +300,11 @@ public class TextEditorController implements Initializable {
 		closeMenuItem.setOnAction( e ->{
 			
 			// before closing make sure file is saved still need to add code to do that
-			
+			saveChanges();
 			textEditorTextArea.clear();
 			textEditor.update("");
 			fullPath = null;
+			fileNameLabel.setText("None");
 		});
 		
 		newMenuItem.setOnAction(e ->{
@@ -317,6 +314,7 @@ public class TextEditorController implements Initializable {
 			
 			String contents = FileIO.readString(fullPath);
 			textEditorTextArea.setText(contents);
+			fileNameLabel.setText(FileIO.getFileName(fullPath));
 
 			
 		});
@@ -431,5 +429,49 @@ public class TextEditorController implements Initializable {
         DecimalFormat formatter = new DecimalFormat("#,###.00");
         return formatter.format(val);
     }
+    
+   public boolean changesWereMade() {
+		    	
+		    	boolean res = !hasSameWords(fullPath,textEditor.getWords());
+		    	
+		    	if(res) System.out.println("changes were made");
+		    	
+		    	return res;
+    }
+    
+    public void saveChanges() {
+		Alert confirmation = new Alert(AlertType.CONFIRMATION);
+		
+		// check if there is something unsaved
+		boolean fullpathNull = fullPath == null;
+		
+		//read saved text file and compare content with current text area tex
+		if(!fullpathNull && !hasSameWords(fullPath,textEditor.getWords())) {
+
+			confirmation.setHeaderText("Would you like to save the changes made to " + fullPath);
+			
+			Optional<ButtonType> save = confirmation.showAndWait();
+			
+			if(save.get().equals(ButtonType.OK)) {
+				FileIO.saveFile(textEditor.getRawContent(), new File(fullPath));
+				System.out.println("Changes were saved");
+			}
+			
+		}
+		
+		else if(fullpathNull && textEditor.hasContent()) {
+			
+			confirmation.setHeaderText("You are closing the file without saving the content, would you like to save it ?");
+			Optional<ButtonType> save = confirmation.showAndWait();
+			
+			if(save.get().equals(ButtonType.OK)) {
+				saveAsMenuItem.fire();
+			}
+			
+		}
+		
+	}
+    
+    
 
 }

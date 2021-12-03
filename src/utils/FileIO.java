@@ -9,145 +9,148 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javafx.stage.FileChooser;
 import utils.Path;
 
-public class FileIO 
-{
-	
-	private FileIO() {}
+public class FileIO {
+
+	private FileIO() {
+	}
+
 	private static final String projectPath = Path.getProjectPath();
 	private static final String DEFAULT_FILENAME = "";
 	
 	
-	public static String displayTextFileSaver(String contents,FileChooser fileChooser) {
-		
+	public static String getFileName(String fullPath) {
+		if(fullPath == null) return "Not saved yet";
+		String[] temp = fullPath.split("\\\\");
+		return temp[temp.length - 1];
+	}
+
+	public static String displayTextFileSaver(String contents, FileChooser fileChooser) {
+
 		fileChooser.setInitialFileName(DEFAULT_FILENAME);
-		
+
 		File selectedFile = fileChooser.showSaveDialog(null);
-		
-		if(selectedFile != null) {
-			saveFile(contents,selectedFile);
+
+		if (selectedFile != null) {
+			saveFile(contents, selectedFile);
 			return selectedFile.getAbsolutePath();
 		}
-		
+
 		return "";
 	}
-	
-	
-	
-	public static void saveFile(String content,File file) {
-		
-		//MAKE SURE USER ENTERS VALID EXTENSION .TXT
-		
-		if(file == null) return;
-		
+
+	public static void saveFile(String content, File file) {
+
+		// MAKE SURE USER ENTERS VALID EXTENSION .TXT
+
+		if (file == null)
+			return;
+
 		try {
 			FileWriter fw = new FileWriter(file);
-			
+
 			fw.write(content);
 			fw.close();
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public static void printContentOfDirectory() {
+
+		File folder = new File("data");
+		File[] listOfFiles = folder.listFiles();
+
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile()) {
+				System.out.println("File " + listOfFiles[i].getName());
+			} else if (listOfFiles[i].isDirectory()) {
+				System.out.println("Directory " + listOfFiles[i].getName());
+			}
+		}
+	}
+
 	// relative path will be relative to the root folder of the project
-	public static void write(String fileName,String relativePath,String contents)
-	{
+	public static void write(String fileName, String relativePath, String contents) {
 		String filePath = projectPath + relativePath + "/" + fileName;
-		
-		try 
-		{
+
+		try {
 			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
 			PrintWriter pw = new PrintWriter(bos);
-			
-			for(int i = 0; i < contents.length();i++)
-			{
+
+			for (int i = 0; i < contents.length(); i++) {
 				pw.append(contents.charAt(i));
 			}
-			
+
 			pw.close();
-		} 
-		
-		catch (FileNotFoundException e) 
-		{
+		}
+
+		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
-	//  returns empty string when things go wrong
-	public static String[] read(String fileName,String relativePath)
-	{
+
+	// returns empty string when things go wrong
+	public static String[] read(String fileName, String relativePath) {
 		String filePath = projectPath + relativePath + "/" + fileName;
 		return read(filePath);
 	}
-	
-	
-	
-	
+
 //  returns empty string when things go wrong
-	public static String[] read(String absolutePath)
-	{
+	public static String[] read(String absolutePath) {
 		String filePath = absolutePath;
 		StringBuilder contents = new StringBuilder();
-		
-		try 
-		{
+
+		try {
 			BufferedReader br = new BufferedReader(new FileReader(filePath));
 			String temp;
-			
-			while((temp = br.readLine())!=null)
-			{
-				contents.append(temp.toLowerCase()+" ");
+
+			while ((temp = br.readLine()) != null) {
+				contents.append(temp.toLowerCase() + " ");
 			}
-			
+
 			br.close();
-		
-		} 
-		
-		catch (IOException e) 
-		{
+
+		}
+
+		catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return contents.toString().split(" ");
 	}
-	
-	
-	
-	public static String readString(String absolutePath)
-	{
+
+	public static String readString(String absolutePath) {
 		String filePath = absolutePath;
 		StringBuilder contents = new StringBuilder();
-		
-		try 
-		{
+
+		try {
 			BufferedReader br = new BufferedReader(new FileReader(filePath));
 			String temp;
-			
-			while((temp = br.readLine())!=null)
-			{
+
+			while ((temp = br.readLine()) != null) {
 				contents.append(temp + "\n");
 			}
-			
+
 			br.close();
-		
-		} 
-		
-		catch (IOException e) 
-		{
-			e.printStackTrace();
+
 		}
-		
+
+		catch (IOException e) {
+			// e.printStackTrace();
+		}
+
 		return contents.toString();
 	}
-	
-	
-	
-	
+
+	public static void main(String[] args) {
+		System.out.println(getFileName("D:\\umair\\name.txt"));
+	}
+
 }
