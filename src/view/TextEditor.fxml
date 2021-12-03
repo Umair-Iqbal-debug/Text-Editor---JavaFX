@@ -39,7 +39,7 @@
                   </CustomMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="logOutMenuItem" mnemonicParsing="false" text="Log out" />
-                  <MenuItem mnemonicParsing="false" text="Exit" />
+                  <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" text="Exit" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Edit">

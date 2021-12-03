@@ -15,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -22,6 +23,9 @@ import model.Password;
 import utils.BackUpRestoreTools;
 
 public class SignUpController implements Initializable {
+	
+	@FXML
+	private Label usernameIsTakenLabel;
 	@FXML
     private ImageView passwordsMustMatchIcon;
 
@@ -225,7 +229,10 @@ public class SignUpController implements Initializable {
 		});
 		
 		usernameTextField.textProperty().addListener((obs,oldVal,newVal) ->{
+			String username = usernameTextField.getText();
 			if(Password.validatePassword(passwordField.getText()) && !usernameTextField.getText().isBlank()) signUpBtn.setDisable(false);
+			else if(Main.bag.isUsernameTaken(username))usernameIsTakenLabel.setVisible(true);
+			else usernameIsTakenLabel.setVisible(false);
 		});
 
 		signInBtn.setOnAction(e -> {
@@ -250,7 +257,8 @@ public class SignUpController implements Initializable {
 			else if (Main.bag.isUsernameTaken(usernameTextField.getText())) {
 				
 				usernameTextField.setStyle("-fx-border-color:red;");
-				//errorLabel.setText("Sorry that username taken!.");
+				
+
 			}
 
 			else if (Main.bag.addUser(usernameTextField.getText(), passwordField.getText())) {

@@ -69,6 +69,7 @@ public class TextEditor {
 			words= new String[0];
 			sentences = new String[0];
 			System.out.println(getWrongWordsString());
+			fleschScoreCalculator.setScore(0);
 		}
 		else {
 			

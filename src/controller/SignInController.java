@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 
 public class SignInController implements Initializable {
@@ -86,6 +87,12 @@ public class SignInController implements Initializable {
 				showPasswordField.end();
 			}
 
+		});
+		
+		passwordField.setOnKeyPressed( e -> {
+			 if (e.getCode().equals(KeyCode.ENTER)) {
+	               loginBtn.fire();
+	            }
 		});
 
 		passwordField.focusedProperty().addListener((obs, newVal, oldVal) -> {

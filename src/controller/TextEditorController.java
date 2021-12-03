@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -38,6 +39,9 @@ import model.TextEditor;
 import utils.FileIO;
 
 public class TextEditorController implements Initializable {
+	
+	@FXML
+	private MenuItem exitMenuItem;
 	
 	@FXML
 	private MenuItem logOutMenuItem;
@@ -143,6 +147,11 @@ public class TextEditorController implements Initializable {
 		
 		Main.window.setTitle(Titles.TEXT_EDITOR);
 		
+		exitMenuItem.setOnAction(e ->{
+			logOutMenuItem.fire();
+			Main.window.close();
+		});
+		
 		logOutMenuItem.setOnAction(e ->{
 			// SAVE CHANGES CAN BE ITS OWN METHOD
 			Alert confirmation = new Alert(AlertType.CONFIRMATION);
@@ -173,7 +182,29 @@ public class TextEditorController implements Initializable {
 			Main.bag.logout();
 			
 			// move back to login scene
-			Main.window.setScene(Main.signInScene);
+			
+			try {
+				FXMLLoader loader1 = new FXMLLoader();
+				loader1.setLocation(getClass().getResource(Main.SIGN_IN_VIEW_PATH));
+				Parent signIn = (Parent) loader1.load();
+
+				SignInController controller = loader1.getController();
+				Main.signInPane = controller.getRoot();
+				Main.splitPane = controller.getSplitPane();
+
+				Main.signInScene = new Scene(signIn);
+
+				Main.signInScene.getStylesheets().add(getClass().getResource("../styles/application.css").toExternalForm());
+
+				Main.window.setTitle("Sign In");
+				Main.window.setScene(Main.signInScene);
+				Main.window.show();
+				
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 			
 		});
 		

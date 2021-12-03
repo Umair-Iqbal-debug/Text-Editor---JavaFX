@@ -91,6 +91,9 @@ public class FleschScoreCalculator {
 		
 		
 	}
+	public void setScore(int i) {
+		this.score = i;
+	}
 	
 	public static void main(String[] args) {
 		//Flesch Reading Ease Score = 206.835 - 1.015 × ( Total Words / Total Sentences ) − 84.6 × ( Total Syllables / Total Words )
@@ -103,4 +106,6 @@ public class FleschScoreCalculator {
 		System.out.println(fs.getASL());
 		
 	}
+
+	
 }

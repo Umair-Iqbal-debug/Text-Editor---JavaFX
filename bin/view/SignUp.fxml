@@ -170,6 +170,7 @@
                   </HBox>
                </children>
             </VBox>
+            <Label fx:id="usernameIsTakenLabel" layoutX="99.0" layoutY="139.0" text="Sorry that username is taken" textFill="RED" visible="false" />
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

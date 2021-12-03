@@ -22,7 +22,10 @@ public class MarkovTextGeneratorBST {
 	
 
 	public void train(String text) {
+		wordList.clear();
+		
 		String[] words = text.split(" ");
+		
 
 		String firstWord = words[0].toLowerCase();
 
@@ -56,6 +59,8 @@ public class MarkovTextGeneratorBST {
 
 	// O(N^2)
 	public void train(String[] words) {
+		
+		wordList.clear();
 
 		String firstWord = words[0];
 
