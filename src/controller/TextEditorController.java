@@ -28,6 +28,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -158,6 +159,12 @@ public class TextEditorController implements Initializable {
 		
 		
 		initfontCbo();
+		
+		saveMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
+		loadMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
+		closeMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
+		newMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));
+		formatTextMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+F"));
 		
 		textEditorTextArea.setPrefHeight(centerVBox.getHeight());
 		
