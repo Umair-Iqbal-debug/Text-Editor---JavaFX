@@ -34,7 +34,7 @@
                   <MenuItem fx:id="markovTextBtn" mnemonicParsing="false" text="Markov Text Generator" />
                   <CustomMenuItem fx:id="spellCheckMenuItem" mnemonicParsing="false" text="Spell-Check">
                     <content>
-                      <CheckBox text="Spell-Check" />
+                      <CheckBox fx:id="spellCheckBtn" style="-fx-text-fill: black;" text="Spell-Check" />
                     </content>
                   </CustomMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />

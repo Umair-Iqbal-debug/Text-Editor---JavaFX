@@ -163,6 +163,8 @@ public class TextEditorController implements Initializable {
 		logOutMenuItem.setOnAction(e ->{
 			// SAVE CHANGES CAN BE ITS OWN METHOD
 			
+		
+			
 			saveChanges();
 			
 			// close current file 
@@ -399,6 +401,7 @@ public class TextEditorController implements Initializable {
 		rightVBox.setStyle("-fx-background-color:aliceblue;");
 		spellCheck = true;
 		misspelledWordsTextArea.fontProperty().bind(textEditorTextArea.fontProperty());
+		misspelledWordsTextArea.setEditable(false);
 	}
 
 	public void initTextEditor() {

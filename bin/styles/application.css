@@ -34,4 +34,7 @@
 	-fx-border-color: blue blue blue blue;
 }
 
+#spellCheckBtn:hover{
+	-fx-text-fill:white;
+}
 

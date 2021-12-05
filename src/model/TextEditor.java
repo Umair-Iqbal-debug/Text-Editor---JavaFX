@@ -163,7 +163,8 @@ public class TextEditor {
 	}
 
 	public boolean hasContent() {
-		return rawContent != null || !rawContent.isBlank();
+		
+		return rawContent != null && !rawContent.isBlank();
 	}
 	
 	
