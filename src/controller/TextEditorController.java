@@ -41,6 +41,9 @@ import utils.FileIO;
 public class TextEditorController implements Initializable {
 	
 	@FXML
+	private VBox topVBox;
+	
+	@FXML
 	private HBox currentFileHBox;
 	
 	@FXML
@@ -144,15 +147,19 @@ public class TextEditorController implements Initializable {
 	
 	private boolean menuCollapsed;
 	
-	private Insets paddingWithFormatMenuUncollapsed = new Insets(60, 10, 5, 5);
-	private Insets paddingWithoutFormatMenu = new Insets(2.5,10,0,5);
+	private Insets paddingWithFormatMenuUncollapsed = new Insets(0, 10, 5, 5);
+	private Insets paddingWithoutFormatMenu = new Insets(2.5,10,5,5);
 	
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		
 		
+		
+		
 		initfontCbo();
+		
+		textEditorTextArea.setPrefHeight(centerVBox.getHeight());
 		
 		Main.window.setTitle(Titles.TEXT_EDITOR);
 		
@@ -164,11 +171,6 @@ public class TextEditorController implements Initializable {
 		
 		
 		logOutMenuItem.setOnAction(e ->{
-			// SAVE CHANGES CAN BE ITS OWN METHOD
-			
-		
-			
-			saveChanges();
 			
 			// close current file 
 			closeMenuItem.fire();
@@ -210,17 +212,21 @@ public class TextEditorController implements Initializable {
 			
 			
 			if(!menuCollapsed) {
-				centerVBox.getChildren().remove(0);
-				formatTextMenuItem.setText("Show Format Text");
+				topVBox.getChildren().remove(1);
+				formatTextMenuItem.setText("Show Format Text Menu");
 				rightVBox.setPadding(paddingWithoutFormatMenu);
-				misspelledWordsTextArea.setPrefSize(94, 446.4);
-				
+				topVBox.setPrefHeight(topVBox.getHeight()-40);
+				textEditorTextArea.setPrefHeight(centerVBox.getHeight());
+				misspelledWordsTextArea.setPrefHeight(rightVBox.getHeight());
+				VBox.setMargin(textEditorTextArea, new Insets(5,5,5,5));
 			}
 			else {
-				centerVBox.getChildren().add(0,formatMenu);
-				formatTextMenuItem.setText("Collapse");
+				topVBox.getChildren().add(1,formatMenu);
+				formatTextMenuItem.setText("Collapse Format Menu");
 				rightVBox.setPadding(paddingWithFormatMenuUncollapsed);
-				misspelledWordsTextArea.setPrefSize(94, 406.4);
+				misspelledWordsTextArea.setPrefWidth(94);
+				textEditorTextArea.setPrefHeight(centerVBox.getHeight());
+				misspelledWordsTextArea.setPrefHeight(rightVBox.getHeight());
 		}
 			
 			menuCollapsed = !menuCollapsed;
@@ -249,8 +255,10 @@ public class TextEditorController implements Initializable {
 				fileNameLabel.setText(FileIO.getFileName(fullPath));	
 			}
 		});
+		
 
 		textEditorTextArea.textProperty().addListener((obs, oldVal, newVal) -> {
+			
 			textEditor.update(newVal);
 			wordCountLabel.setText(textEditor.getTotalWords() + "");
 			sentenceCountLabel.setText(textEditor.getTotalSentences() + "");
@@ -371,6 +379,12 @@ public class TextEditorController implements Initializable {
 		sentenceCountMenuItem.setOnAction(e ->{
 			sentenceCountContainer.setVisible(!sentenceCountContainer.isVisible());
 		});
+		
+		centerVBox.heightProperty().addListener((obs,oldVal,newVal) ->{
+			textEditorTextArea.setPrefHeight((double) newVal);
+		});
+		
+
 
 	}
 
@@ -402,7 +416,8 @@ public class TextEditorController implements Initializable {
 	public void initMisspelledWordsTextArea() {
 		misspelledWordsTextArea = new TextArea();
 		VBox.setMargin(misspelledWordsTextArea, new Insets(5, 15, 0, 10));
-		misspelledWordsTextArea.setPrefSize(94, 406.4);
+		misspelledWordsTextArea.setPrefWidth(94);
+		misspelledWordsTextArea.setPrefHeight(rightVBox.getHeight());
 		misspelledWordsTextArea.setStyle("-fx-text-fill: red;");
 		rightVBox.setPrefSize(134, 482);
 		rightVBox.setPadding(paddingWithFormatMenuUncollapsed);
@@ -413,9 +428,6 @@ public class TextEditorController implements Initializable {
 		misspelledWordsTextArea.setEditable(false);
 	}
 	
-	public void printHeights() {
-		System.out.println("spell-check height:" + misspelledWordsTextArea.getHeight() + ", text-area height: " + textEditorTextArea.getHeight());
-	}
 
 	public void initTextEditor() {
 
@@ -423,7 +435,6 @@ public class TextEditorController implements Initializable {
 		textEditorTextArea.textProperty().addListener((obs, oldVal, newVal) -> {
 			
 			misspelledWordsTextArea.setText(textEditor.getWrongWordsString());
-			printHeights();
 
 			// System.out.println(Arrays.toString(oldWords));
 
@@ -440,6 +451,7 @@ public class TextEditorController implements Initializable {
 
     private int to255Int(double d) {
         return (int) (d * 255);
+        
     }
     
     static String formatDoubleVal(double val){
@@ -449,11 +461,8 @@ public class TextEditorController implements Initializable {
     
    public boolean changesWereMade() {
 		    	
-		    	boolean res = !hasSameWords(fullPath,textEditor.getWords());
+		    	return  !hasSameWords(fullPath,textEditor.getWords());
 		    	
-		    	if(res) System.out.println("changes were made");
-		    	
-		    	return res;
     }
     
     public void saveChanges() {
@@ -465,7 +474,7 @@ public class TextEditorController implements Initializable {
 		//read saved text file and compare content with current text area tex
 		if(!fullpathNull && !hasSameWords(fullPath,textEditor.getWords())) {
 
-			confirmation.setHeaderText("Would you like to save the changes made to " + fullPath);
+			confirmation.setHeaderText("Would you like to save the changes made to " + FileIO.getFileName(fullPath));
 			
 			Optional<ButtonType> save = confirmation.showAndWait();
 			
