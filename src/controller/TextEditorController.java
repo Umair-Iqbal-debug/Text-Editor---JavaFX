@@ -144,6 +144,9 @@ public class TextEditorController implements Initializable {
 	
 	private boolean menuCollapsed;
 	
+	private Insets paddingWithFormatMenuUncollapsed = new Insets(60, 10, 5, 5);
+	private Insets paddingWithoutFormatMenu = new Insets(2.5,10,0,5);
+	
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -204,15 +207,21 @@ public class TextEditorController implements Initializable {
 		});
 		
 		formatTextMenuItem.setOnAction(e ->{
+			
+			
 			if(!menuCollapsed) {
 				centerVBox.getChildren().remove(0);
 				formatTextMenuItem.setText("Show Format Text");
+				rightVBox.setPadding(paddingWithoutFormatMenu);
+				misspelledWordsTextArea.setPrefSize(94, 446.4);
 				
 			}
 			else {
 				centerVBox.getChildren().add(0,formatMenu);
 				formatTextMenuItem.setText("Collapse");
-			}
+				rightVBox.setPadding(paddingWithFormatMenuUncollapsed);
+				misspelledWordsTextArea.setPrefSize(94, 406.4);
+		}
 			
 			menuCollapsed = !menuCollapsed;
 		});
@@ -393,15 +402,19 @@ public class TextEditorController implements Initializable {
 	public void initMisspelledWordsTextArea() {
 		misspelledWordsTextArea = new TextArea();
 		VBox.setMargin(misspelledWordsTextArea, new Insets(5, 15, 0, 10));
-		misspelledWordsTextArea.setPrefSize(94, 461);
+		misspelledWordsTextArea.setPrefSize(94, 406.4);
 		misspelledWordsTextArea.setStyle("-fx-text-fill: red;");
 		rightVBox.setPrefSize(134, 482);
-		rightVBox.setPadding(new Insets(5, 10, 5, 5));
+		rightVBox.setPadding(paddingWithFormatMenuUncollapsed);
 		rightVBox.getChildren().add(misspelledWordsTextArea);
 		rightVBox.setStyle("-fx-background-color:aliceblue;");
 		spellCheck = true;
 		misspelledWordsTextArea.fontProperty().bind(textEditorTextArea.fontProperty());
 		misspelledWordsTextArea.setEditable(false);
+	}
+	
+	public void printHeights() {
+		System.out.println("spell-check height:" + misspelledWordsTextArea.getHeight() + ", text-area height: " + textEditorTextArea.getHeight());
 	}
 
 	public void initTextEditor() {
@@ -410,6 +423,7 @@ public class TextEditorController implements Initializable {
 		textEditorTextArea.textProperty().addListener((obs, oldVal, newVal) -> {
 			
 			misspelledWordsTextArea.setText(textEditor.getWrongWordsString());
+			printHeights();
 
 			// System.out.println(Arrays.toString(oldWords));
 
