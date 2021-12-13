@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
@@ -11,7 +12,7 @@ public class MarkovTextGeneratorBST {
 
 	// list of wordNodes which each of their own word and another list of all the
 	// words that follow it
-	private TreeMap<String,WordNode> wordList;
+	private Map<String,WordNode> wordList;
 	// using Random object to generate random indices
 	private Random generator;
 
@@ -57,7 +58,7 @@ public class MarkovTextGeneratorBST {
 
 	}
 
-	// O(N^2)
+	// O(lgn)
 	public void train(String[] words) {
 		
 		wordList.clear();
@@ -88,7 +89,7 @@ public class MarkovTextGeneratorBST {
 
 	}
 
-	// time complexity O(N) where N is the size of wordList
+	// time complexity O(nlgn) where N is the size of wordList
 	public WordNode findWordInWordList(String word) {
 		return wordList.get(word.toLowerCase());
 
@@ -136,7 +137,7 @@ public class MarkovTextGeneratorBST {
 	private class WordNode {
 
 		private String word;
-		private ArrayList<WordNode> nextWords;
+		private List<WordNode> nextWords;
 
 		public WordNode(String word) {
 			this.word = word;

@@ -92,6 +92,7 @@
                               <CheckBox fx:id="spellCheckBtn" style="-fx-text-fill: black;" text="Spell-Check" />
                            </content>
                         </CustomMenuItem>
+                        <MenuItem fx:id="liveSpellCheckMenuItem" mnemonicParsing="false" text="Enable Live Spell-Check" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem fx:id="logOutMenuItem" mnemonicParsing="false" text="Log out" />
                         <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" text="Exit" />

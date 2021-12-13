@@ -1,29 +1,26 @@
 package controller;
 
-import java.io.IOException;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import application.Main;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import model.Password;
 import utils.BackUpRestoreTools;
 
 public class SignUpController implements Initializable {
 	
+	private static final String GREEN_TEXT = "-fx-text-fill:green;";
+	
+	private static final String RED_TEXT = "-fx-text-fill:red;";
 	@FXML
 	private Label usernameIsTakenLabel;
 	@FXML
@@ -180,17 +177,19 @@ public class SignUpController implements Initializable {
 			String confirmPass = confirmPasswordField.getText();
 
 			
-			if(Password.upperCaseCheck.test(newVal)) passwordUpperCaseIcon.setImage(Main.checkMarkImage);
-			else passwordUpperCaseIcon.setImage(Main.errorImage);
+			if(Password.upperCaseCheck.test(newVal)) setTestPassedStyle(passwordUpperCaseIcon,passwordUpperCaseLabel);
 			
-			if(Password.lowerCaseCheck.test(newVal)) passwordLowerCaseIcon.setImage(Main.checkMarkImage);
-			else passwordLowerCaseIcon.setImage(Main.errorImage);
+			else setTestFailedStyle(passwordUpperCaseIcon,passwordUpperCaseLabel);
+							
 			
-			if(Password.lengthCheck.test(newVal)) passwordLengthIcon.setImage(Main.checkMarkImage);
-			else passwordLengthIcon.setImage(Main.errorImage);
+			if(Password.lowerCaseCheck.test(newVal))setTestPassedStyle(passwordLowerCaseIcon,passwordLowerCaseLabel);
+			else setTestFailedStyle(passwordLowerCaseIcon,passwordLowerCaseLabel);
 			
-			if(Password.digitCheck.test(newVal)) passwordDigitIcon.setImage(Main.checkMarkImage);
-			else passwordDigitIcon.setImage(Main.errorImage);
+			if(Password.lengthCheck.test(newVal)) setTestPassedStyle(passwordLengthIcon,passwordLengthLabel);
+			else  setTestFailedStyle(passwordLengthIcon,passwordLengthLabel);
+			
+			if(Password.digitCheck.test(newVal))  setTestPassedStyle(passwordDigitIcon,passwordDigitLabel);
+			else setTestFailedStyle(passwordDigitIcon,passwordDigitLabel);
 			
 
 			if (!confirmPass.isEmpty()) {
@@ -215,12 +214,12 @@ public class SignUpController implements Initializable {
 
 			if (!pass.isEmpty()) {
 				if (!pass.equals(newVal)) {
-					passwordsMustMatchIcon.setImage(Main.errorImage);
+					setTestFailedStyle(passwordsMustMatchIcon,passwordsMustMatchLabel);
 					setErrorStyleOnFields();
 				}
 				
 				else {
-					passwordsMustMatchIcon.setImage(Main.checkMarkImage);
+					setTestPassedStyle(passwordsMustMatchIcon,passwordsMustMatchLabel);
 					if(Password.validatePassword(newVal) && !usernameTextField.getText().isBlank()) signUpBtn.setDisable(false);
 					resetStyle();
 				}
@@ -230,8 +229,12 @@ public class SignUpController implements Initializable {
 		
 		usernameTextField.textProperty().addListener((obs,oldVal,newVal) ->{
 			String username = usernameTextField.getText();
-			if(Password.validatePassword(passwordField.getText()) && !usernameTextField.getText().isBlank()) signUpBtn.setDisable(false);
-			else if(Main.bag.isUsernameTaken(username))usernameIsTakenLabel.setVisible(true);
+			boolean usernameIsavailable = !Main.bag.isUsernameTaken(username);
+			if(Password.validatePassword(passwordField.getText()) && usernameIsavailable) signUpBtn.setDisable(false);
+			else if(Main.bag.isUsernameTaken(username)) {
+				usernameIsTakenLabel.setVisible(true);
+				signUpBtn.setDisable(true);
+			}
 			else usernameIsTakenLabel.setVisible(false);
 		});
 
@@ -279,6 +282,16 @@ public class SignUpController implements Initializable {
 				//errorLabel.setText("Password must be atleast 6 characters with atleast one uppercase,lowercase and a digit!");
 			}
 		});
+	}
+	
+	public void setTestFailedStyle(ImageView imageView,Label label) {
+		imageView.setImage(Main.errorImage);
+		label.setStyle(RED_TEXT);
+	}
+	
+	public void setTestPassedStyle(ImageView imageView,Label label) {
+		imageView.setImage(Main.checkMarkImage);
+		label.setStyle(GREEN_TEXT);
 	}
 
 	public void setErrorStyleOnFields() {

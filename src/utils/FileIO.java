@@ -1,6 +1,7 @@
 package utils;
 
 import java.io.BufferedOutputStream;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,11 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import javafx.stage.FileChooser;
-import utils.Path;
 
 public class FileIO {
 
@@ -36,12 +33,12 @@ public class FileIO {
 
 		File selectedFile = fileChooser.showSaveDialog(null);
 
-		if (selectedFile != null) {
+		if (selectedFile != null && contents!=null) {
 			saveFile(contents, selectedFile);
 			return selectedFile.getAbsolutePath();
 		}
 
-		return "";
+		return null;
 	}
 
 	public static void saveFile(String content, File file) {
@@ -53,7 +50,7 @@ public class FileIO {
 
 		try {
 			FileWriter fw = new FileWriter(file);
-
+			if(content == null) content = " ";
 			fw.write(content);
 			fw.close();
 
@@ -106,6 +103,8 @@ public class FileIO {
 	public static String[] read(String absolutePath) {
 		String filePath = absolutePath;
 		StringBuilder contents = new StringBuilder();
+		
+		//if(absolutePath == null) return "".split("");
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(filePath));

@@ -2,15 +2,18 @@ package controller;
 
 import java.io.File;
 
+
 import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.Stack;
-
 import application.Main;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -28,7 +31,9 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -40,46 +45,48 @@ import model.TextEditor;
 import utils.FileIO;
 
 public class TextEditorController implements Initializable {
-	
+
+	private static final double DEFAULT_FONT_SIZE = 16;
+
 	@FXML
 	private VBox topVBox;
-	
+
 	@FXML
 	private HBox currentFileHBox;
-	
+
 	@FXML
 	private Label fileNameLabel;
-	
+
 	@FXML
 	private MenuItem exitMenuItem;
-	
+
 	@FXML
 	private MenuItem logOutMenuItem;
-	
+
 	@FXML
 	private HBox wordCountContainer;
-	
+
 	@FXML
 	private HBox sentenceCountContainer;
-	
+
 	@FXML
 	private HBox fleschScoreContainer;
-	
+
 	@FXML
 	private Slider fontSlider;
-	
+
 	@FXML
 	private VBox centerVBox;
-	
+
 	@FXML
 	private MenuItem formatTextMenuItem;
-	
+
 	@FXML
 	private HBox formatMenu;
-	
-	@FXML 
+
+	@FXML
 	private ComboBox<String> cboFontFamily;
-	
+
 	@FXML
 	private ColorPicker colorPicker;
 
@@ -132,297 +139,300 @@ public class TextEditorController implements Initializable {
 	private MenuItem wordCounMenuItem;
 
 	@FXML
+	private MenuItem liveSpellCheckMenuItem;
+
+	@FXML
 	private Label wordCountLabel;
 
 	private String fullPath = null;
 
 	private TextArea misspelledWordsTextArea;
 
-	private Stack<String> undoStack;
-
 	private boolean spellCheck = false;
 
 	private final TextEditor textEditor = new TextEditor();
-	
+
 	private final List<String> fontNames = Font.getFamilies();
-	
+
 	private boolean menuCollapsed;
 	
+	private boolean liveSpellCheckEnabled = true;
+
+	final FileChooser fileChooser = new FileChooser();
+
 	private Insets paddingWithFormatMenuUncollapsed = new Insets(0, 10, 5, 5);
-	private Insets paddingWithoutFormatMenu = new Insets(2.5,10,5,5);
 	
+	private Insets paddingWithoutFormatMenu = new Insets(2.5, 10, 5, 5);
+	
+	ChangeListener<String> updateStats = this::updateStats;
+	EventHandler<KeyEvent> updateStatsOnSpace = this::updateStatsOnSpace;
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		
-		
-		
-		
+
 		initfontCbo();
-		
-		saveMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
-		loadMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
-		closeMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
-		newMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));
-		formatTextMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+F"));
-		
+		misspelledWordsTextArea = new TextArea();
+		initShortcutKeys();
+
 		textEditorTextArea.setPrefHeight(centerVBox.getHeight());
-		
+
 		Main.window.setTitle(Titles.TEXT_EDITOR);
-		
-		exitMenuItem.setOnAction(e ->{
-			logOutMenuItem.fire();
-			Main.window.close();
-		});
-		
-		
-		
-		logOutMenuItem.setOnAction(e ->{
-			
-			// close current file 
-			closeMenuItem.fire();
-			
-			//if there something unchanged ask user if he wants to save it first
-			
-			
-			//logout
-			Main.bag.logout();
-			
-			// move back to login scene
-			
-			try {
-				FXMLLoader loader1 = new FXMLLoader();
-				loader1.setLocation(getClass().getResource(Main.SIGN_IN_VIEW_PATH));
-				Parent signIn = (Parent) loader1.load();
 
-				SignInController controller = loader1.getController();
-				Main.signInPane = controller.getRoot();
-				Main.splitPane = controller.getSplitPane();
+		exitMenuItem.setOnAction(this::exitMenuHandler);
+			
+		logOutMenuItem.setOnAction(this::logoutMenuItemHandler);
 
-				Main.signInScene = new Scene(signIn);
+		formatTextMenuItem.setOnAction(this::formatTextMenuHandler);
 
-				Main.signInScene.getStylesheets().add(getClass().getResource("../styles/application.css").toExternalForm());
+		initColorPicker();
 
-				Main.window.setTitle("Sign In");
-				Main.window.setScene(Main.signInScene);
-				Main.window.show();
-				
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-			
-		});
-		
-		formatTextMenuItem.setOnAction(e ->{
-			
-			
-			if(!menuCollapsed) {
-				topVBox.getChildren().remove(1);
-				formatTextMenuItem.setText("Show Format Text Menu");
-				rightVBox.setPadding(paddingWithoutFormatMenu);
-				topVBox.setPrefHeight(topVBox.getHeight()-40);
-				textEditorTextArea.setPrefHeight(centerVBox.getHeight());
-				misspelledWordsTextArea.setPrefHeight(rightVBox.getHeight());
-				VBox.setMargin(textEditorTextArea, new Insets(5,5,5,5));
-			}
-			else {
-				topVBox.getChildren().add(1,formatMenu);
-				formatTextMenuItem.setText("Collapse Format Menu");
-				rightVBox.setPadding(paddingWithFormatMenuUncollapsed);
-				misspelledWordsTextArea.setPrefWidth(94);
-				textEditorTextArea.setPrefHeight(centerVBox.getHeight());
-				misspelledWordsTextArea.setPrefHeight(rightVBox.getHeight());
-		}
-			
-			menuCollapsed = !menuCollapsed;
-		});
-		
-		colorPicker.setValue(Color.BLACK);
-		colorPicker.valueProperty().addListener((obs,oldVal,newVal) ->{
-			textEditorTextArea.setStyle("-fx-text-fill:" + toRgbString(newVal) + ";");
-		});
-		
 		textEditorTextArea.setWrapText(true);
 		misspelledWordsTextArea = new TextArea();
 
-		undoStack = new Stack<>();
+		configureFileChooser();
 
-		final FileChooser fileChooser = new FileChooser();
-		fileChooser.getExtensionFilters().add(new ExtensionFilter("Text Files", "*.txt"));
-		fileChooser.setInitialDirectory(new File("data"));
-		loadMenuItem.setOnAction(e -> {
-			File file = fileChooser.showOpenDialog(null);
+		loadMenuItem.setOnAction(this::loadMenuItemHandler);
 
-			if (file != null) {
-				fullPath = file.getAbsolutePath();
-				String contents = FileIO.readString(fullPath);
-				textEditorTextArea.setText(contents);
-				fileNameLabel.setText(FileIO.getFileName(fullPath));	
-			}
-		});
+		textEditorTextArea.textProperty().addListener(updateStats);
 		
+		//textEditorTextArea.setOnKeyPressed(this::updateStatsOnSpace);
 
-		textEditorTextArea.textProperty().addListener((obs, oldVal, newVal) -> {
-			
-			textEditor.update(newVal);
-			wordCountLabel.setText(textEditor.getTotalWords() + "");
-			sentenceCountLabel.setText(textEditor.getTotalSentences() + "");
-			fleschScoreLabel.setText(formatDoubleVal(textEditor.getFleschScore()));
-			if(fullPath != null) {
-				//System.out.println("full path is not null");
-				if(changesWereMade()) fileNameLabel.setText("*" + FileIO.getFileName(fullPath));
-				else fileNameLabel.setText(FileIO.getFileName(fullPath));
-			}
-			
-			else {
-				fileNameLabel.setText(FileIO.getFileName(fullPath));
-				//System.out.println("full path is null");
-			}
-			
-			if (oldVal.length() >= 0)
-				undoStack.push(oldVal);
-		});
+		markovTextBtn.setOnAction(this::markovTextBtnHandler);
 
-		markovTextBtn.setOnAction(e -> {
+		saveAsMenuItem.setOnAction(this::saveAsMenuItemHandler);
 
-			Pane root;
-			try {
-				root = FXMLLoader.load(getClass().getResource("../view/MarkovTextGenerator.fxml"));
-				Scene scene = new Scene(root);
-				scene.getStylesheets().add(getClass().getResource("../styles/application.css").toExternalForm());
-				Main.window.setScene(scene);
-				Main.window.show();
-				
-				
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+		saveMenuItem.setOnAction(this::saveMenuItemHandler);
 
-		});
+		fontSlider.setValue(DEFAULT_FONT_SIZE);
 
-		saveAsMenuItem.setOnAction(e -> {
-			fullPath = FileIO.displayTextFileSaver(textEditor.getRawContent(), fileChooser);
-			fileNameLabel.setText(FileIO.getFileName(fullPath));
-		});
+		fontSlider.valueProperty().addListener(this::fontValuePropertyHandler);
 
-		saveMenuItem.setOnAction(e -> {
-			if (fullPath == null)
-				saveAsMenuItem.fire();
-			else
-				FileIO.saveFile(textEditor.getRawContent(), new File(fullPath));
-			fileNameLabel.setText(FileIO.getFileName(fullPath));
-		});
+		closeMenuItem.setOnAction(this::closeMenuItemHandler);
 
+		newMenuItem.setOnAction(this::newMenuItemHandler);
 
-		fontSlider.setValue(16);
+		undoMenuItem.setOnAction(e -> textEditorTextArea.undo());
 
-		fontSlider.valueProperty().addListener(e -> {
-			textEditorTextArea.setFont(Font.font(cboFontFamily.getValue(),fontSlider.getValue()));
-		});
+		spellCheckMenuItem.setOnAction(this::spellCheckHandler);
 		
+		liveSpellCheckMenuItem.setOnAction(this::liveSpellCheck);
+
+		fleschScoreMenuItem.setOnAction(this::fleschScoreHandler);
+
+		wordCounMenuItem.setOnAction(this::wordCountHandler);
+
+		sentenceCountMenuItem.setOnAction(this::sentenceCountHandler);
+
+		centerVBox.heightProperty().addListener(this::resizeTextEditorTextArea);
 		
-		closeMenuItem.setOnAction( e ->{
-			
-			// before closing make sure file is saved still need to add code to do that
-			saveChanges();
-			textEditorTextArea.clear();
-			textEditor.update("");
-			fullPath = null;
-			fileNameLabel.setText("None");
+		liveSpellCheckMenuItem.setText("Disable live Spell-Check");
+	}
+	
+	public void liveSpellCheck(ActionEvent e) {
+		//if live spell check is already enabled and we are click on it disable it and enable spell check on space
+		if(liveSpellCheckEnabled) disableLiveSpellCheck();
+		
+		else enableLiveSpellCheck();
+		
+		liveSpellCheckEnabled = !liveSpellCheckEnabled;
+	}
+	
+	
+	private void disableLiveSpellCheck() {
+		//System.out.println("disabling live spell-check");
+		// show some message to let them know what is enabled
+		textEditorTextArea.textProperty().removeListener(updateStats);
+		textEditorTextArea.setOnKeyPressed(updateStatsOnSpace);
+		liveSpellCheckMenuItem.setText("Enable live Spell-Check");
+		
+	}
+	
+	private void enableLiveSpellCheck() {
+		textEditorTextArea.removeEventHandler(KeyEvent.KEY_PRESSED,updateStatsOnSpace);
+		textEditorTextArea.textProperty().addListener(updateStats);
+		updateStats();
+		misspelledWordsTextArea.setText(textEditor.getWrongWordsString());
+		liveSpellCheckMenuItem.setText("Disable live Spell-Check");
+		
+	}
+	
+	
+	public void updateStatsOnSpace(KeyEvent e) {
+		if(e.getCode() == KeyCode.SPACE) updateStats();
+	}
+	
+	public void exitMenuHandler(ActionEvent e) {
+		logOutMenuItem.fire();
+		Main.window.close();
+	}
+	
+	public void logoutMenuItemHandler(ActionEvent e) {
+		// close current file
+					closeMenuItem.fire();
+
+					// logout
+					Main.bag.logout();
+
+					// move back to login scene
+					moveToSignInPage();
+	}
+
+	public void formatTextMenuHandler(ActionEvent e) {
+
+		if (!menuCollapsed)
+			collapseFormatTextMenu();
+		else
+			unCollapseFormatTextMenu();
+
+		menuCollapsed = !menuCollapsed;
+	}
+
+	public void unCollapseFormatTextMenu() {
+		topVBox.getChildren().add(1, formatMenu);
+		formatTextMenuItem.setText("Collapse Format Menu");
+		rightVBox.setPadding(paddingWithFormatMenuUncollapsed);
+		misspelledWordsTextArea.setPrefWidth(94);
+		textEditorTextArea.setPrefHeight(centerVBox.getHeight());
+		misspelledWordsTextArea.setPrefHeight(rightVBox.getHeight());
+	}
+
+	public void collapseFormatTextMenu() {
+
+		topVBox.getChildren().remove(1);
+		formatTextMenuItem.setText("Show Format Text Menu");
+		rightVBox.setPadding(paddingWithoutFormatMenu);
+		topVBox.setPrefHeight(topVBox.getHeight() - 40);
+		textEditorTextArea.setPrefHeight(centerVBox.getHeight());
+		misspelledWordsTextArea.setPrefHeight(rightVBox.getHeight());
+		VBox.setMargin(textEditorTextArea, new Insets(5, 5, 5, 5));
+	}
+
+	public void initColorPicker() {
+		colorPicker.setValue(Color.BLACK);
+		colorPicker.valueProperty().addListener((obs, oldVal, newVal) -> {
+			textEditorTextArea.setStyle("-fx-text-fill:" + toRgbString(newVal) + ";");
 		});
-		
-		newMenuItem.setOnAction(e ->{
-			// make sure current file is saved
-			closeMenuItem.fire(); // closes previous file
-			saveAsMenuItem.fire();
-			
+	}
+
+	public void loadMenuItemHandler(ActionEvent e) {
+
+		File file = fileChooser.showOpenDialog(null);
+
+		if (file != null) {
+			fullPath = file.getAbsolutePath();
 			String contents = FileIO.readString(fullPath);
 			textEditorTextArea.setText(contents);
 			fileNameLabel.setText(FileIO.getFileName(fullPath));
+		}
+	}
 
+	public void markovTextBtnHandler(ActionEvent e) {
+
+		Pane root;
+		try {
+			root = FXMLLoader.load(getClass().getResource(Main.MARKOV_VIEW_PATH));
+			Scene scene = new Scene(root);
+			applyBaseStyle(scene);
+			Main.window.setScene(scene);
+			Main.window.show();
+
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	public void configureFileChooser() {
+		fileChooser.getExtensionFilters().add(new ExtensionFilter("Text Files", "*.txt"));
+		fileChooser.setInitialDirectory(new File("data"));
+	}
+
+	public void saveAsMenuItemHandler(ActionEvent e) {
+		
+		fullPath = FileIO.displayTextFileSaver(textEditor.getRawContent(), fileChooser);
+		if(fullPath != null)fileNameLabel.setText(FileIO.getFileName(fullPath));
+	}
+
+	public void saveMenuItemHandler(ActionEvent e) {
+		if (fullPath == null || fullPath.isBlank()) {
+			saveAsMenuItem.fire();
+			//System.out.println("Save as menu item fired");
+		}
 			
-		});
+		else
+			FileIO.saveFile(textEditor.getRawContent(), new File(fullPath));
+		fileNameLabel.setText(FileIO.getFileName(fullPath));
+	}
 
-		undoMenuItem.setOnAction(e -> {
+	public void fontValuePropertyHandler(ObservableValue<? extends Number> obs, Number oldVal, Number newVal) {
+		textEditorTextArea.setFont(Font.font(cboFontFamily.getValue(), fontSlider.getValue()));
+	}
 
-			if (undoStack.isEmpty()) {
-				textEditorTextArea.setText("");
-				textEditor.update("");
-				return;
-			}
+	public void closeMenuItemHandler(ActionEvent e) {
+		if(fullPath != null)saveChanges();
+		textEditorTextArea.clear();
+		textEditor.update("");
+		fullPath = null;
+		fileNameLabel.setText("No File Selected");
+	}
 
-			String words = undoStack.pop();
+	public void newMenuItemHandler(ActionEvent e) {
+		// make sure current file is saved
+		if(fullPath != null)closeMenuItem.fire(); // closes previous file
+		saveAsMenuItem.fire();
 
-			textEditorTextArea.setText(words);
-			textEditor.update(words);
-
-			if (!undoStack.isEmpty())
-				undoStack.pop();
-
-		});
-
-		spellCheckMenuItem.setOnAction(e -> {
-			if (!spellCheck) {
-				initMisspelledWordsTextArea();
-				misspelledWordsTextArea.setText(textEditor.getWrongWordsString());
-			} else {
-				rightVBox.getChildren().remove(0);
-				spellCheck = false;
-				rightVBox.setPrefSize(0, 0);
-			}
-			initTextEditor();
-		});
-		
-		fleschScoreMenuItem.setOnAction(e ->{
-			fleschScoreContainer.setVisible(!fleschScoreContainer.isVisible());
-		});
-		
-		wordCounMenuItem.setOnAction(e ->{
-			wordCountContainer.setVisible(!wordCountContainer.isVisible());
-		});
-
-		sentenceCountMenuItem.setOnAction(e ->{
-			sentenceCountContainer.setVisible(!sentenceCountContainer.isVisible());
-		});
-		
-		centerVBox.heightProperty().addListener((obs,oldVal,newVal) ->{
-			textEditorTextArea.setPrefHeight((double) newVal);
-		});
-		
-
+		if(fullPath != null) {
+			String contents = FileIO.readString(fullPath);
+			textEditorTextArea.setText(contents);
+		}
+		//fileNameLabel.setText(FileIO.getFileName(fullPath));
 
 	}
 
+	public void sentenceCountHandler(ActionEvent e) {
+		sentenceCountContainer.setVisible(!sentenceCountContainer.isVisible());
+	}
+
+	public void wordCountHandler(ActionEvent e) {
+		wordCountContainer.setVisible(!wordCountContainer.isVisible());
+	}
+
+	public void fleschScoreHandler(ActionEvent e) {
+		fleschScoreContainer.setVisible(!fleschScoreContainer.isVisible());
+	}
+
+	public void resizeTextEditorTextArea(ObservableValue<? extends Number> obs, Number oldVal, Number newVal) {
+		textEditorTextArea.setPrefHeight((double) newVal);
+	}
+
 	private boolean hasSameWords(String fullPath2, String[] words) {
-		
+
 		String[] savedContents = FileIO.read(fullPath2);
-		
-		if(savedContents.length != words.length) return false;
-		
-		for(int i = 0; i < savedContents.length; i++) {
-			if(!savedContents[i].equalsIgnoreCase(words[i])) return false;
+
+		if (savedContents.length != words.length)
+			return false;
+
+		for (int i = 0; i < savedContents.length; i++) {
+			if (!savedContents[i].equalsIgnoreCase(words[i]))
+				return false;
 		}
-		
+
 		return true;
 	}
 
 	private void initfontCbo() {
-		
+
 		cboFontFamily.getItems().addAll(fontNames);
 		cboFontFamily.setValue(textEditorTextArea.getFont().getName());
-		cboFontFamily.valueProperty().addListener((obs,oldVal,newVal) ->{
-			
-			textEditorTextArea.setFont(Font.font(newVal,fontSlider.getValue()));
+		cboFontFamily.valueProperty().addListener((obs, oldVal, newVal) -> {
+
+			textEditorTextArea.setFont(Font.font(newVal, fontSlider.getValue()));
 		});
-		
+
 	}
-	
 
 	public void initMisspelledWordsTextArea() {
-		misspelledWordsTextArea = new TextArea();
-		VBox.setMargin(misspelledWordsTextArea, new Insets(5, 15, 0, 10));
+
+		VBox.setMargin(misspelledWordsTextArea, new Insets(5, 5, 0, 10));
 		misspelledWordsTextArea.setPrefWidth(94);
 		misspelledWordsTextArea.setPrefHeight(rightVBox.getHeight());
 		misspelledWordsTextArea.setStyle("-fx-text-fill: red;");
@@ -431,80 +441,171 @@ public class TextEditorController implements Initializable {
 		rightVBox.getChildren().add(misspelledWordsTextArea);
 		rightVBox.setStyle("-fx-background-color:aliceblue;");
 		spellCheck = true;
-		misspelledWordsTextArea.fontProperty().bind(textEditorTextArea.fontProperty());
 		misspelledWordsTextArea.setEditable(false);
 	}
-	
 
-	public void initTextEditor() {
+	public void resizeMisspelledTextArea(ObservableValue<? extends Number> obs, Number oldVal, Number newVal) {
+		misspelledWordsTextArea.setPrefHeight((double) newVal);
+	}
 
+	public void enableSpellCheck() {
+
+		initMisspelledWordsTextArea();
+		misspelledWordsTextArea.setText(textEditor.getWrongWordsString());
 		textEditorTextArea.setWrapText(true);
-		textEditorTextArea.textProperty().addListener((obs, oldVal, newVal) -> {
-			
-			misspelledWordsTextArea.setText(textEditor.getWrongWordsString());
+		rightVBox.heightProperty().addListener(this::resizeMisspelledTextArea);
+	}
 
-			// System.out.println(Arrays.toString(oldWords));
+	public void disableSpellCheck() {
+		rightVBox.getChildren().remove(0);
+		spellCheck = false;
+		rightVBox.setPrefSize(0, 0);
+		rightVBox.heightProperty().removeListener(this::resizeMisspelledTextArea);
+	}
 
-		});
+	public boolean changesWereMade() {
+		return !hasSameWords(fullPath, textEditor.getWords());
+
+	}
+
+	public void updateStats(ObservableValue<? extends String> obs, String oldVal, String newVal) {
+		
+		//System.out.println("updating on every change");
+		textEditor.update(newVal);
+		updateStatusBarLabels();
+		updateCurrFilePath();
+		misspelledWordsTextArea.setText(textEditor.getWrongWordsString());
+
 	}
 	
-	private String toRgbString(Color c) {
-        return "rgb("
-                          + to255Int(c.getRed())
-                    + "," + to255Int(c.getGreen())
-                    + "," + to255Int(c.getBlue())
-             + ")";
-    }
+	public void updateStats() {
 
-    private int to255Int(double d) {
-        return (int) (d * 255);
-        
-    }
-    
-    static String formatDoubleVal(double val){
-        DecimalFormat formatter = new DecimalFormat("#,###.00");
-        return formatter.format(val);
-    }
-    
-   public boolean changesWereMade() {
-		    	
-		    	return  !hasSameWords(fullPath,textEditor.getWords());
-		    	
-    }
-    
-    public void saveChanges() {
+		textEditor.update(textEditorTextArea.getText());
+		updateStatusBarLabels();
+		updateCurrFilePath();
+		misspelledWordsTextArea.setText(textEditor.getWrongWordsString());
+
+	}
+
+	public void updateCurrFilePath() {
+
+		if (fullPath != null) {
+			if (changesWereMade())
+				fileNameLabel.setText("*" + FileIO.getFileName(fullPath));
+			else
+				fileNameLabel.setText(FileIO.getFileName(fullPath));
+		}
+
+		else {
+			fileNameLabel.setText(FileIO.getFileName(fullPath));
+		}
+	}
+
+	public void updateStatusBarLabels() {
+
+		wordCountLabel.setText(textEditor.getTotalWords() + "");
+		sentenceCountLabel.setText(textEditor.getTotalSentences() + "");
+		fleschScoreLabel.setText(formatDoubleVal(textEditor.getFleschScore()));
+
+	}
+
+	public void spellCheckHandler(ActionEvent e) {
+
+		if (!spellCheck)
+			enableSpellCheck();
+
+		else
+			disableSpellCheck();
+	}
+
+	public void saveChanges() {
 		Alert confirmation = new Alert(AlertType.CONFIRMATION);
-		
+
 		// check if there is something unsaved
 		boolean fullpathNull = fullPath == null;
-		
-		//read saved text file and compare content with current text area tex
-		if(!fullpathNull && !hasSameWords(fullPath,textEditor.getWords())) {
+
+		// read saved text file and compare content with current text area tex
+		if (!fullpathNull && !hasSameWords(fullPath, textEditor.getWords())) {
 
 			confirmation.setHeaderText("Would you like to save the changes made to " + FileIO.getFileName(fullPath));
-			
+
 			Optional<ButtonType> save = confirmation.showAndWait();
-			
-			if(save.get().equals(ButtonType.OK)) {
+
+			if (save.get().equals(ButtonType.OK)) {
 				FileIO.saveFile(textEditor.getRawContent(), new File(fullPath));
-				System.out.println("Changes were saved");
+				//System.out.println("Changes were saved");
 			}
-			
+
 		}
-		
-		else if(fullpathNull && textEditor.hasContent()) {
-			
-			confirmation.setHeaderText("You are closing the file without saving the content, would you like to save it ?");
+
+		else if (fullpathNull && textEditor.hasContent()) {
+
+			confirmation
+					.setHeaderText("You are closing the file without saving the content, would you like to save it ?");
 			Optional<ButtonType> save = confirmation.showAndWait();
-			
-			if(save.get().equals(ButtonType.OK)) {
+
+			if (save.get().equals(ButtonType.OK)) {
 				saveAsMenuItem.fire();
 			}
-			
+
 		}
-		
+
 	}
-    
-    
+
+	public void moveToSignInPage() {
+
+		FXMLLoader loader1 = new FXMLLoader();
+		loader1.setLocation(getClass().getResource(Main.SIGN_IN_VIEW_PATH));
+		Parent signIn;
+		try {
+			signIn = (Parent) loader1.load();
+			SignInController controller = loader1.getController();
+			Main.signInPane = controller.getRoot();
+			Main.splitPane = controller.getSplitPane();
+
+			Main.signInScene = new Scene(signIn);
+
+			Main.signInScene.getStylesheets().add(getClass().getResource("../styles/application.css").toExternalForm());
+
+			Main.window.setTitle("Sign In");
+			Main.window.setScene(Main.signInScene);
+			Main.window.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void initShortcutKeys() {
+
+		saveMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
+		loadMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
+		closeMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
+		newMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));
+		formatTextMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+F"));
+		undoMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+Z"));
+		liveSpellCheckMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+L"));
+
+	}
+
+	public void applyBaseStyle(Scene scene) {
+		scene.getStylesheets().add(getClass().getResource("../styles/application.css").toExternalForm());
+	}
+
+	// METHODS THAT SHOULD GO TO A DIFFERENT CLASS
+
+	private String toRgbString(Color c) {
+		return "rgb(" + to255Int(c.getRed()) + "," + to255Int(c.getGreen()) + "," + to255Int(c.getBlue()) + ")";
+	}
+
+	private int to255Int(double d) {
+		return (int) (d * 255);
+
+	}
+
+	static String formatDoubleVal(double val) {
+		DecimalFormat formatter = new DecimalFormat("#,###.00");
+		return formatter.format(val);
+	}
 
 }

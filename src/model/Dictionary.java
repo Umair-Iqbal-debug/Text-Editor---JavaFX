@@ -12,12 +12,9 @@ public class Dictionary {
 	private final String DICTIONARY_FILE_PATH = "data";
 	private final String DICTIONARY_FILE_NAME =	 "DICTIONARY.txt";
 	private LinkedList<String> wrongWords;
-	private final HashSet<String> ignoredWords;
 	
 	public Dictionary() {
-		
 		initDictionary();
-		ignoredWords = new HashSet<String>();
 	}
 	
 	private void initDictionary() {
@@ -25,9 +22,6 @@ public class Dictionary {
 		setDictionary(words);
 	}
 	
-	public void ignoreWord(String word) {
-		ignoredWords.add(word);
-	}
 	
 	private void setDictionary(String[] words) {
 		
@@ -57,40 +51,25 @@ public class Dictionary {
 	}
 	
 	public boolean isMisspelled(String word) {
-		word = word.toLowerCase().strip();
+		String cleanWord = cleanWord(word);
 		
-		if((word.isBlank() || ignoredWords.contains(word))) return false;
+		if(word.isBlank()) return false;
 		// ignore punctuation at the end
-		word = processWord(word);
 		
-		return !DICTIONARY.contains(word);
+		return !DICTIONARY.contains(word.toLowerCase()) && !DICTIONARY.contains(cleanWord);
 	}
 	
-	private String processWord(String word) {
-		
-		word = word.toLowerCase().strip();
-		int size = word.length();
-		
-		char[] letters = word.toCharArray();
-		
-		char first = letters[0];
-		char last = letters[size-1];
-		
-		if(size > 1 && isPunctuation(first)) word = word.substring(1);
-		
-		if(isPunctuation(last)) word = word.substring(0,size-1);
-		
-		return word;
+	public String cleanWord(String word) {
+		return word.toLowerCase().strip().replaceAll("\\p{Punct}", "");
 	}
 	
-	private boolean isPunctuation(char curr) {
-		
-		return (curr >= 33 && curr <=47);
-	}
-	  
+	
 	
 	
 	public static void main(String[] args) {
+		
+		//TESTS
+		
 		Dictionary dict = new Dictionary();
 		String sentence = "all I do is win win no matter what aldksfj kk laskdkdin laksd fkas;ldigh;alk";
 		System.out.println(dict.getWrongWordsString(sentence.split(" ")));

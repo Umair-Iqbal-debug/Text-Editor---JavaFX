@@ -35,6 +35,7 @@ public class Main extends Application {
 	public static final String SIGN_IN_VIEW_PATH = VIEW_BASE_PATH + "SignIn.fxml";
 	public static final String SIGN_UP_VIEW_PATH = VIEW_BASE_PATH + "SignUp.fxml";
 	public static final String TEXT_EDITOR_VIEW_PATH = VIEW_BASE_PATH + "TextEditor.fxml";
+	public static final String MARKOV_VIEW_PATH = VIEW_BASE_PATH + "MarkovTextGenerator.fxml";
 
 	public static void main(String[] args) {
 		launch(args);
@@ -123,5 +124,7 @@ public class Main extends Application {
 			}
 		});
 	}
+	
+	
 
 }
