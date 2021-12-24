@@ -2,7 +2,6 @@ package controller;
 
 import java.io.File;
 
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -15,6 +14,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import model.MarkovTextGeneratorBST;
 
 public class MarkovTextController implements Initializable {
@@ -46,39 +46,29 @@ public class MarkovTextController implements Initializable {
 
 	@FXML
 	private Label fileNameLabel;
-	
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
 		Main.window.setTitle(Titles.MARKOV_TEXT);
-		
+
 		initLearnBtn();
 
 		gen = new MarkovTextGeneratorBST();
-		
+
 		outputField.setWrapText(true);
 
 		createBtn.setOnAction(e -> {
-
-			// input validation & make sure there is a file selected
-
-//			if(absoluteFilePath == null) {
-//				errorLabel.setText("no file selected");
-//			}
-//			
-//			else if(wordField.getText().isEmpty()) {
-//				errorLabel.setText("total words cannot be empty");
-//			}
-//			
-//			else if(wordField.getText().isEmpty()) {
-//				errorLabel.setText("starter word cannot be empty");
-//			}
-//			
-
-			// if totalWords.getText().isEmpty() show error message
-
-			// if starterWords.getText().isEmpty() show error message
+			
+			if(noFileSelected()) {
+				outputField.setText("NO FILE SELECTED!!");
+				return;
+			}
+			
+			else if(wordField.getText().isBlank() || numberField.getText().isBlank()) {
+				outputField.setText("NUMBER FIELD AND WORD FIELD CANNOT BE BLANK!");
+				return;
+			}
 
 			int totalWords = Integer.parseInt(numberField.getText());
 			String starterWord = wordField.getText();
@@ -88,9 +78,9 @@ public class MarkovTextController implements Initializable {
 		});
 
 		numberField.textProperty().addListener((obs, oldVal, newVal) -> {
-			if (!newVal.isEmpty() && !isNumeric(newVal))
+			if (!newVal.isBlank() && !isNumeric(newVal))
 				numberField.setText(oldVal);
-			if (newVal.isEmpty())
+			if (newVal.isBlank())
 				createBtn.setDisable(true);
 			else
 				createBtn.setDisable(false);
@@ -116,6 +106,8 @@ public class MarkovTextController implements Initializable {
 	public void initLearnBtn() {
 		createBtn.setDisable(true);
 		final FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().add(new ExtensionFilter("Text Files", "*.txt"));
+		fileChooser.setInitialDirectory(new File("data"));
 
 		learnBtn.setOnAction(e -> {
 			File file = fileChooser.showOpenDialog(null);
@@ -126,5 +118,9 @@ public class MarkovTextController implements Initializable {
 				gen.train(utils.FileIO.read(absoluteFilePath));
 			}
 		});
+	}
+	
+	public boolean noFileSelected() {
+		return absoluteFilePath == null;
 	}
 }

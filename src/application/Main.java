@@ -55,7 +55,7 @@ public class Main extends Application {
 		initTextEditor();
 
 		startUp();
-
+		
 	}
 
 	public void initSignUpPane() throws IOException {
@@ -123,6 +123,7 @@ public class Main extends Application {
 				window.close();
 			}
 		});
+		
 	}
 	
 	

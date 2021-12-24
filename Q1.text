@@ -1,0 +1,31 @@
+1.	(4 points) Discuss briefly the advantages and disadvantages of a recursive algorithm
+A recursive algorithm provides elegant solutions for certain problems but one of the disadvantages is that is the call stack (this takes of space) there is a call stack size limit and if your program exceeds that it will throw a stack over flow error
+
+2. (16 points) Provide Big O time complexity values for the following algorithms: (2 points each) 
+1) Binary search – Big O(lgn)
+2) Sequential Search – Big O(n)
+3) Bubble sort – Big O(n^2)
+4) Insertion sort – Big O(n^2)
+5) Selection sort – Big O(n^2)
+6) Quick sort – Big O (nlgn)
+7) Merge sort – Big O(nlgn)
+8) Heap sort- Big O(nlgn)
+
+(9 points) Discuss briefly the behaviors of stacks, queues, and priority queues (2 points each). Discuss a potential application for each of these data structures (1 point each).
+A stack is a LIFO(last in first out data structure) it’s most efficient implementation is using a linkedlist. A stack is useful for reversing the order of stuff and also useful for checking mathematical expressions (balancing parenthesis). With the most efficient implementation you can get O(1) push and pop operations.
+A queue is  FIFO(first in first out data structure) it’s most useful to keep order its most efficient implementation would be using a double ended singly linked list with the head at the end and the other end as the starting of the queue. It useful for doing BFS in a tree or graph and many real life situations where you wanna process some object ie customers on a first come basis.
+A priority queue is a data structure which gives you access to the minimum element/ maximum element in constant time and it is best implemented using heaps. You can use priority queue to implement heap sort.
+
+(8 points) List the advantages and disadvantages of arrays, linked lists, binary search trees, and hashed data structures. (2 points each)
+Arrays :
+	Advantages: constant time random access,
+Disadvantages: size limit must be declared beforehand,
+Linked list: advantages : size doesn’t have to declared before hand, but searching is always linear so is deletion at any where other than head.
+
+BST
+Hash Data structure
+
+ 
+. (3 points) Why are the data structure classes in the API Collections Framework coded using interfaces?
+To make it easier 
+

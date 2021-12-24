@@ -2,7 +2,6 @@ package controller;
 
 import java.io.File;
 
-
 import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -155,15 +154,15 @@ public class TextEditorController implements Initializable {
 	private final List<String> fontNames = Font.getFamilies();
 
 	private boolean menuCollapsed;
-	
+
 	private boolean liveSpellCheckEnabled = true;
 
 	final FileChooser fileChooser = new FileChooser();
 
 	private Insets paddingWithFormatMenuUncollapsed = new Insets(0, 10, 5, 5);
-	
+
 	private Insets paddingWithoutFormatMenu = new Insets(2.5, 10, 5, 5);
-	
+
 	ChangeListener<String> updateStats = this::updateStats;
 	EventHandler<KeyEvent> updateStatsOnSpace = this::updateStatsOnSpace;
 
@@ -179,7 +178,7 @@ public class TextEditorController implements Initializable {
 		Main.window.setTitle(Titles.TEXT_EDITOR);
 
 		exitMenuItem.setOnAction(this::exitMenuHandler);
-			
+
 		logOutMenuItem.setOnAction(this::logoutMenuItemHandler);
 
 		formatTextMenuItem.setOnAction(this::formatTextMenuHandler);
@@ -194,8 +193,8 @@ public class TextEditorController implements Initializable {
 		loadMenuItem.setOnAction(this::loadMenuItemHandler);
 
 		textEditorTextArea.textProperty().addListener(updateStats);
-		
-		//textEditorTextArea.setOnKeyPressed(this::updateStatsOnSpace);
+
+		// textEditorTextArea.setOnKeyPressed(this::updateStatsOnSpace);
 
 		markovTextBtn.setOnAction(this::markovTextBtnHandler);
 
@@ -214,7 +213,7 @@ public class TextEditorController implements Initializable {
 		undoMenuItem.setOnAction(e -> textEditorTextArea.undo());
 
 		spellCheckMenuItem.setOnAction(this::spellCheckHandler);
-		
+
 		liveSpellCheckMenuItem.setOnAction(this::liveSpellCheck);
 
 		fleschScoreMenuItem.setOnAction(this::fleschScoreHandler);
@@ -224,57 +223,60 @@ public class TextEditorController implements Initializable {
 		sentenceCountMenuItem.setOnAction(this::sentenceCountHandler);
 
 		centerVBox.heightProperty().addListener(this::resizeTextEditorTextArea);
-		
+
 		liveSpellCheckMenuItem.setText("Disable live Spell-Check");
+		
 	}
-	
+
 	public void liveSpellCheck(ActionEvent e) {
-		//if live spell check is already enabled and we are click on it disable it and enable spell check on space
-		if(liveSpellCheckEnabled) disableLiveSpellCheck();
-		
-		else enableLiveSpellCheck();
-		
+		// if live spell check is already enabled and we are click on it disable it and
+		// enable spell check on space
+		if (liveSpellCheckEnabled)
+			disableLiveSpellCheck();
+
+		else
+			enableLiveSpellCheck();
+
 		liveSpellCheckEnabled = !liveSpellCheckEnabled;
 	}
-	
-	
+
 	private void disableLiveSpellCheck() {
-		//System.out.println("disabling live spell-check");
+		// System.out.println("disabling live spell-check");
 		// show some message to let them know what is enabled
 		textEditorTextArea.textProperty().removeListener(updateStats);
 		textEditorTextArea.setOnKeyPressed(updateStatsOnSpace);
 		liveSpellCheckMenuItem.setText("Enable live Spell-Check");
-		
+
 	}
-	
+
 	private void enableLiveSpellCheck() {
-		textEditorTextArea.removeEventHandler(KeyEvent.KEY_PRESSED,updateStatsOnSpace);
+		textEditorTextArea.removeEventHandler(KeyEvent.KEY_PRESSED, updateStatsOnSpace);
 		textEditorTextArea.textProperty().addListener(updateStats);
 		updateStats();
 		misspelledWordsTextArea.setText(textEditor.getWrongWordsString());
 		liveSpellCheckMenuItem.setText("Disable live Spell-Check");
-		
+
 	}
-	
-	
+
 	public void updateStatsOnSpace(KeyEvent e) {
-		if(e.getCode() == KeyCode.SPACE) updateStats();
+		if (e.getCode() == KeyCode.SPACE)
+			updateStats();
 	}
-	
+
 	public void exitMenuHandler(ActionEvent e) {
 		logOutMenuItem.fire();
 		Main.window.close();
 	}
-	
+
 	public void logoutMenuItemHandler(ActionEvent e) {
 		// close current file
-					closeMenuItem.fire();
+		closeMenuItem.fire();
 
-					// logout
-					Main.bag.logout();
+		// logout
+		Main.bag.logout();
 
-					// move back to login scene
-					moveToSignInPage();
+		// move back to login scene
+		moveToSignInPage();
 	}
 
 	public void formatTextMenuHandler(ActionEvent e) {
@@ -347,17 +349,18 @@ public class TextEditorController implements Initializable {
 	}
 
 	public void saveAsMenuItemHandler(ActionEvent e) {
-		
+
 		fullPath = FileIO.displayTextFileSaver(textEditor.getRawContent(), fileChooser);
-		if(fullPath != null)fileNameLabel.setText(FileIO.getFileName(fullPath));
+		if (fullPath != null)
+			fileNameLabel.setText(FileIO.getFileName(fullPath));
 	}
 
 	public void saveMenuItemHandler(ActionEvent e) {
 		if (fullPath == null || fullPath.isBlank()) {
 			saveAsMenuItem.fire();
-			//System.out.println("Save as menu item fired");
+			// System.out.println("Save as menu item fired");
 		}
-			
+
 		else
 			FileIO.saveFile(textEditor.getRawContent(), new File(fullPath));
 		fileNameLabel.setText(FileIO.getFileName(fullPath));
@@ -368,7 +371,8 @@ public class TextEditorController implements Initializable {
 	}
 
 	public void closeMenuItemHandler(ActionEvent e) {
-		if(fullPath != null)saveChanges();
+		if (fullPath != null)
+			saveChanges();
 		textEditorTextArea.clear();
 		textEditor.update("");
 		fullPath = null;
@@ -377,15 +381,13 @@ public class TextEditorController implements Initializable {
 
 	public void newMenuItemHandler(ActionEvent e) {
 		// make sure current file is saved
-		if(fullPath != null)closeMenuItem.fire(); // closes previous file
-		saveAsMenuItem.fire();
+		if (isFileOpen())
+			closeMenuItem.fire(); // closes previous file
 
-		if(fullPath != null) {
-			String contents = FileIO.readString(fullPath);
-			textEditorTextArea.setText(contents);
-		}
-		//fileNameLabel.setText(FileIO.getFileName(fullPath));
+	}
 
+	public boolean isFileOpen() {
+		return fullPath != null;
 	}
 
 	public void sentenceCountHandler(ActionEvent e) {
@@ -403,20 +405,31 @@ public class TextEditorController implements Initializable {
 	public void resizeTextEditorTextArea(ObservableValue<? extends Number> obs, Number oldVal, Number newVal) {
 		textEditorTextArea.setPrefHeight((double) newVal);
 	}
+// WORKING HAS_SAME_WORDS
+//	private boolean hasSameWords(String fullPath2, String[] words) {
+//
+//		String[] savedContents = FileIO.read(fullPath2);
+//
+//		if (savedContents.length != words.length)
+//			return false;
+//
+//		for (int i = 0; i < savedContents.length; i++) {
+//			if (!savedContents[i].equalsIgnoreCase(words[i]))
+//				return false;
+//		}
+//
+//		return true;
+//	}
+	
+	private boolean hasSameWords(String fullPath2, String words) {
 
-	private boolean hasSameWords(String fullPath2, String[] words) {
+		String savedContents = FileIO.readString(fullPath2);
 
-		String[] savedContents = FileIO.read(fullPath2);
-
-		if (savedContents.length != words.length)
+		if (savedContents.length() != words.length())
 			return false;
 
-		for (int i = 0; i < savedContents.length; i++) {
-			if (!savedContents[i].equalsIgnoreCase(words[i]))
-				return false;
-		}
+		return savedContents.equals(words);
 
-		return true;
 	}
 
 	private void initfontCbo() {
@@ -464,20 +477,19 @@ public class TextEditorController implements Initializable {
 	}
 
 	public boolean changesWereMade() {
-		return !hasSameWords(fullPath, textEditor.getWords());
+		return !hasSameWords(fullPath, textEditorTextArea.getText());
 
 	}
 
 	public void updateStats(ObservableValue<? extends String> obs, String oldVal, String newVal) {
-		
-		//System.out.println("updating on every change");
+
 		textEditor.update(newVal);
 		updateStatusBarLabels();
 		updateCurrFilePath();
 		misspelledWordsTextArea.setText(textEditor.getWrongWordsString());
 
 	}
-	
+
 	public void updateStats() {
 
 		textEditor.update(textEditorTextArea.getText());
@@ -525,7 +537,7 @@ public class TextEditorController implements Initializable {
 		boolean fullpathNull = fullPath == null;
 
 		// read saved text file and compare content with current text area tex
-		if (!fullpathNull && !hasSameWords(fullPath, textEditor.getWords())) {
+		if (!fullpathNull && !hasSameWords(fullPath, textEditorTextArea.getText())) {
 
 			confirmation.setHeaderText("Would you like to save the changes made to " + FileIO.getFileName(fullPath));
 
@@ -533,7 +545,7 @@ public class TextEditorController implements Initializable {
 
 			if (save.get().equals(ButtonType.OK)) {
 				FileIO.saveFile(textEditor.getRawContent(), new File(fullPath));
-				//System.out.println("Changes were saved");
+				// System.out.println("Changes were saved");
 			}
 
 		}
