@@ -23,7 +23,7 @@ click [here](https://github.com/Umair-Iqbal-debug/Text-Editor---JavaFX/edit/main
 * custom CSS style to imitate google form UI
 * shortcut-key support for undo
 * collapsible format menu 
-* status bar to show stats like flesch schore, number of words and sentences 
+* status bar to show stats like flesch score, number of words and sentences 
 
 
 ## Markov Text Generation Demo
@@ -45,4 +45,7 @@ https://user-images.githubusercontent.com/78460982/193355258-b07ae301-5d47-4dc5-
 
 ## Editor with File open
 ![editorwithfileopen](https://user-images.githubusercontent.com/78460982/193356151-7f853dac-ce04-429f-97c6-4c5e447e5567.png)
+
+## Spell check
+![spellcheckss](https://user-images.githubusercontent.com/78460982/193358272-26ca00d4-40e1-41f8-8d09-87332eecca93.png)
 
