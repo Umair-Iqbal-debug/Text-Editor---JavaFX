@@ -1,18 +1,22 @@
 # Text Editor
 ## A simple text editor made with JavaFX, FXML and CSS.
 
-https://user-images.githubusercontent.com/78460982/193185894-537547b6-9174-447c-bf97-9ee505206ff0.mp4
+https://user-images.githubusercontent.com/78460982/193346134-98daaf13-b6e7-49aa-84d3-65e6274644f1.mp4
+
 
 ## Description
 I created this as my final project for my data structures class, 
-therefore it is made with the most efficient data structures like
-Binary Search Tree (TreeMap) for the Users. Along with the basic text editor features
+it is made with the most efficient data structures like
+Binary Search Tree (TreeMap) for storing the Users. Along with the basic text editor features
 it also comes with a Markov-Text Generator which is capable of processing huge
-text files such as War and peace and generating text that resembles it.
+text files efficiently, of 600k words and over, such as war and peace the it generates text that resembles it.
 
 ## Features
 * dynamic spell-check
 * dynamic input validation
+* markov text generator
+* Edit and create text files
+* interactive User Interface
 * user authentication
 * open and edit text files
 * custom CSS style to imitate google form UI
