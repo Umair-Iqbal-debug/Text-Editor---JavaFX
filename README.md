@@ -8,9 +8,9 @@ https://user-images.githubusercontent.com/78460982/193346134-98daaf13-b6e7-49aa-
 I created this as my final project for my data structures class, 
 it is made with the most efficient data structures like
 Binary Search Tree (TreeMap) for storing the Users. Along with the basic text editor features
-it also comes with a [Markov-Text Generator](https://github.com/Umair-Iqbal-debug/Text-Editor---JavaFX/edit/main/README.md#markov-text-generation-demo) which is capable of processing huge
+it also comes with a [Markov-Text Generator](#markov-text-generation-demo) which is capable of processing huge
 text files efficiently, of 600k words and over, such as war and peace then it generates text that resembles it. Interested in a demo
-click [here](https://github.com/Umair-Iqbal-debug/Text-Editor---JavaFX/edit/main/README.md#markov-text-generation-demo)
+click [here](#markov-text-generation-demo)
 
 ## Features
 * dynamic spell-check
